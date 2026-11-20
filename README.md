@@ -59,7 +59,7 @@ Scope Guard Lite is the free subset of [Scope Guard](https://gillardlogan.gumroa
 | Destructive SQL | `DROP TABLE`, `DROP COLUMN` | Also Rails, Django and Prisma drops, and any changed migration |
 | Files outside an allowed list | Yes (`allowed-paths`) | Yes, plus `blocked_patterns` with your own severity and reason |
 | Blocks the merge | No, warns only | Yes: fails the job at the severity threshold you set, so it can be a required check |
-| Other rules | None | 18 rules in total: major dependency bumps, added or removed dependencies, deleted files and jobs, auth, payment, secrets and config paths, CI workflow edits, lockfile changes, paths the task never mentions |
+| Other rules | None | 20 rules in total: major dependency bumps, added or removed dependencies, deleted files and jobs, auth, payment, secrets and config paths, CI workflow edits, lockfile changes, paths the task never mentions |
 | Task vs diff | Task is shown only | Checks which changed paths the task never mentions; optional model pass with your own API key |
 | Config | Action inputs | `scope.yml`: threshold, per-rule severity, allowlist entries with reasons, allowed and blocked paths |
 | Where it runs | GitHub Action | GitHub Action, command line, pre-commit hook, plus skill files for Cursor and Claude Code |
