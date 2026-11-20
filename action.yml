@@ -1,0 +1,26 @@
+name: 'Scope Guard Lite - AI agent PR scope check'
+description: 'Free, warn-only pull request check for AI-agent changes: committed secrets, destructive SQL, and files outside allowed paths.'
+author: 'gillardlogan'
+branding:
+  icon: 'shield'
+  color: 'blue'
+inputs:
+  github-token:
+    description: 'Token used to read the PR diff and post the comment. Needs pull-requests: write.'
+    required: false
+    default: ${{ github.token }}
+  allowed-paths:
+    description: 'Optional glob patterns, one per line or comma-separated. Files outside them are flagged.'
+    required: false
+    default: ''
+  task:
+    description: 'Optional task description. Defaults to the PR title and body.'
+    required: false
+    default: ''
+  comment:
+    description: 'Set to "false" to skip the PR comment (findings still go to the job summary).'
+    required: false
+    default: 'true'
+runs:
+  using: 'node20'
+  main: 'src/index.js'
