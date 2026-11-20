@@ -47,7 +47,24 @@ Fork PRs get a read-only token from GitHub, so the comment cannot be posted ther
 
 ## Sample comment
 
-SAMPLE_COMMENT
+Real output from a test PR that added a fake AWS key id, a fake database URL, `DROP TABLE` and `DROP COLUMN` (with `allowed-paths: src/**`). Evidence lines are redacted or collapsed in the full comment:
+
+> ## Scope Guard Lite
+>
+> **5 findings** in 3 files scanned (4 critical). This is a warning only; it does not block the merge.
+>
+> | Severity | Rule | Location | Summary |
+> | --- | --- | --- | --- |
+> | critical | `db.drop_table` | `db/001_cleanup.sql:1` | Dropped table billing_ledger |
+> | critical | `db.drop_column` | `db/001_cleanup.sql:2` | Dropped column users.legacy_id |
+> | critical | `secret.committed` | `src/config.py:1` | Committed secret (AWS access key id) |
+> | critical | `secret.committed` | `src/config.py:2` | Committed secret (database URL with an embedded password) |
+> | high | `scope.outside_allowed` | `db/001_cleanup.sql` | Path outside allowed-paths: db/001_cleanup.sql |
+>
+> _Task read: "Fix greeting text Task: change the greeting in src/app.py only.". Lite does not compare it with the diff._
+>
+> ---
+> Want it to block merges and run the full rule set? [Scope Guard](https://gillardlogan.gumroad.com/l/scope-guard) on Gumroad.
 
 ## Free vs paid
 
