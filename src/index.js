@@ -63,6 +63,7 @@ function render(report, task, allowed) {
     });
   }
   if (!allowed.length) L.push('_`allowed-paths` is not set, so the outside-allowed-paths check was skipped._', '');
+  else L.push('_Checked against `allowed-paths`: ' + allowed.map((p) => '`' + esc(p) + '`').join(', ') + '._', '');
   if (task) {
     const t = task.replace(/\s+/g, ' ').slice(0, 160);
     L.push('_Task read: "' + t + (task.length > 160 ? '\u2026' : '') + '". Lite does not compare it with the diff._', '');

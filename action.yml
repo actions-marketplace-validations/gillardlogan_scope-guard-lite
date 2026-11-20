@@ -1,5 +1,5 @@
-name: 'Scope Guard Lite - AI agent PR scope check'
-description: 'Free, warn-only pull request check for AI-agent changes: committed secrets, destructive SQL, and files outside allowed paths.'
+name: 'Scope Guard Lite: AI agent PR guardrail'
+description: 'Flags AI-agent PRs (Claude Code, Cursor, Copilot) that commit secrets, drop tables or touch files outside allowed paths.'
 author: 'gillardlogan'
 branding:
   icon: 'shield'
