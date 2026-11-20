@@ -1,14 +1,53 @@
 # Scope Guard Lite
 
-A free GitHub Action that checks pull requests written by AI coding agents (Cursor, Claude Code, Copilot, Codex and the like) and leaves **one comment** with anything risky it finds. It warns only. It never blocks a merge.
+**Your coding agent was asked to fix one file. The PR also touches `.env`, a migration and `package.json`. Would you notice before you merge?**
 
-Free checks:
+Scope Guard Lite is a free GitHub Action for pull requests written by AI coding agents (Claude Code, Cursor, Copilot, Codex and the like). It leaves **one PR comment** listing:
 
-- **Committed secrets**: known credential formats (AWS, GitHub, Stripe, Slack, Google, npm, PyPI, SendGrid, private keys, JWTs) and database URLs with an embedded password. Values are redacted in the comment.
-- **Destructive SQL**: `DROP TABLE`, `DROP COLUMN` and `ALTER TABLE ... DROP COLUMN` on added lines.
-- **Files outside `allowed-paths`**: list the paths a change is supposed to touch and anything else is flagged.
+- **Committed secrets**: AWS, GitHub, Stripe, Slack, Google, npm, PyPI and SendGrid keys, private keys, JWTs, and database URLs with a password. Values are redacted.
+- **Destructive SQL**: `DROP TABLE` and `DROP COLUMN` on added lines.
+- **Files outside the paths you allow**: you list where the change should go, and anything else is flagged.
 
-It reads the PR diff through the GitHub API, so it needs no checkout step and no API key, and it sends nothing to any third party.
+It warns only and never blocks a merge. It needs no API key and no checkout step, and it sends your code to no third party.
+
+![Browser demo: the try-it page flagging a webhook fix that committed a secret and dropped a table](docs/demo.gif)
+
+_Browser demo of the rules running on the [try-it page](https://scope-guard-demo.netlify.app/?example=webhook-scope-creep). The free Action leaves a similar findings table as a PR comment._
+
+**Try the rules in your browser first, no install and no sign-up:** https://scope-guard-demo.netlify.app/
+
+## Set up in one minute
+
+Add `.github/workflows/scope-guard-lite.yml`:
+
+    name: Scope Guard Lite
+    on: pull_request
+    permissions: { contents: read, pull-requests: write }
+    jobs:
+      check:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: gillardlogan/scope-guard-lite@v1
+            with:
+              allowed-paths: |
+                src/**
+                tests/**
+
+Leave out `with:` and `allowed-paths` if you only want the secret and SQL checks.
+
+## Free vs paid at a glance
+
+| | Lite (free, MIT) | [Scope Guard](https://gillardlogan.gumroad.com/l/scope-guard) ($49 personal, $149 team of up to 10, one-time) |
+| --- | --- | --- |
+| Secrets, `DROP TABLE` / `DROP COLUMN`, out-of-scope files | Yes | Yes, plus high-entropy secrets and Rails, Django and Prisma drops |
+| Blocks the merge | No, warns only | Yes, fails the job at the severity you choose |
+| Flags files the task never mentions | No | Yes, without an API key |
+| Other rules | None | 20 rules in total, including major dependency bumps, deleted jobs, auth, payment and config paths, CI workflow edits and lockfile churn |
+| Runs as | GitHub Action | GitHub Action, CLI, pre-commit hook, plus skill files for Cursor and Claude Code |
+
+Full table below. Refunds within 14 days. Support is by email only: gillardlogan@gmail.com.
+
+**How this differs from [agent-gate](https://github.com/brett-buskirk/agent-gate):** agent-gate is also free and MIT, and unlike Lite it can block merges. It checks secrets, scope, diff size, missing tests and dependency changes, with an optional Claude-based intent check. Lite does less: it focuses on secrets, dropped tables and columns, and out-of-scope files, and only warns. If you want a free blocking gate, agent-gate is a good choice. Scope Guard (paid) is for teams who also want destructive-migration, deleted-job, auth/payment-path and task-vs-diff checks in one config, run the same way in CI, pre-commit and the editor.
 
 ## Quick start
 
@@ -61,12 +100,14 @@ Real output from a test PR that added a fake AWS key id, a fake database URL, `D
 > | critical | `secret.committed` | `src/config.py:2` | Committed secret (database URL with an embedded password) |
 > | high | `scope.outside_allowed` | `db/001_cleanup.sql` | Path outside allowed-paths: db/001_cleanup.sql |
 >
+> _Checked against `allowed-paths`: `src/**`._
+>
 > _Task read: "Fix greeting text Task: change the greeting in src/app.py only.". Lite does not compare it with the diff._
 >
 > ---
 > Want it to block merges and run the full rule set? [Scope Guard](https://gillardlogan.gumroad.com/l/scope-guard) on Gumroad.
 
-## Free vs paid
+## Full comparison with the paid version
 
 Scope Guard Lite is the free subset of [Scope Guard](https://gillardlogan.gumroad.com/l/scope-guard), a paid merge gate for AI-agent changes.
 
@@ -86,7 +127,7 @@ Scope Guard Lite is the free subset of [Scope Guard](https://gillardlogan.gumroa
 The paid version is a separate product with its own source and licence. This repository only contains the free checks above.
 
 - Try the checks in your browser, with no install: https://scope-guard-demo.netlify.app/
-- Get the full version: https://gillardlogan.gumroad.com/l/scope-guard (code `LAUNCH20` takes 20% off until 26 Nov 2026)
+- Get the full version: https://gillardlogan.gumroad.com/l/scope-guard
 
 ## Limits
 
@@ -98,3 +139,5 @@ The paid version is a separate product with its own source and licence. This rep
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+See also the [changelog](CHANGELOG.md).
